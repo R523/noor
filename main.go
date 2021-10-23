@@ -8,7 +8,9 @@ import (
 
 	"github.com/pterm/pterm"
 	"periph.io/x/conn/v3/i2c/i2creg"
+	"periph.io/x/conn/v3/physic"
 	"periph.io/x/host/v3"
+	"periph.io/x/host/v3/rpi"
 )
 
 const (
@@ -20,8 +22,8 @@ const (
 
 func main() {
 	if err := pterm.DefaultBigText.WithLetters(
-		pterm.NewLettersFromStringWithStyle("Rah", pterm.NewStyle(pterm.FgCyan)),
-		pterm.NewLettersFromStringWithStyle("roo", pterm.NewStyle(pterm.FgLightRed)),
+		pterm.NewLettersFromStringWithStyle("Noo", pterm.NewStyle(pterm.FgCyan)),
+		pterm.NewLettersFromStringWithStyle("r", pterm.NewStyle(pterm.FgLightRed)),
 	).Render(); err != nil {
 		_ = err
 	}
@@ -60,6 +62,12 @@ func main() {
 			}
 
 			pterm.Info.Printf("light: %d\n", d[0])
+
+			if err := rpi.AUDIO_LEFT.PWM(1<<(d[0]), 10*physic.KiloHertz); err != nil {
+				pterm.Error.Printf("cannot setup pwm for led %s\n", err)
+
+				return
+			}
 		}
 	}
 }
