@@ -53,6 +53,8 @@ func main() {
 	for {
 		select {
 		case <-quit:
+			_ = rpi.P1_33.Halt()
+
 			return
 		case <-ticker.C:
 			d := make([]byte, 1)
