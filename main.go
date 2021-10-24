@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/pterm/pterm"
+	"periph.io/x/conn/v3/gpio"
 	"periph.io/x/conn/v3/i2c/i2creg"
 	"periph.io/x/conn/v3/physic"
 	"periph.io/x/host/v3"
@@ -16,14 +17,15 @@ import (
 const (
 	// the i2c address which can be find by i2cdetect -y 1.
 	I2CAddr = 0x48
+	A0      = 0x40
 
-	A0 = 0x40
+	LEDFreq = 100 * physic.Hertz
 )
 
 func main() {
 	if err := pterm.DefaultBigText.WithLetters(
-		pterm.NewLettersFromStringWithStyle("Noo", pterm.NewStyle(pterm.FgCyan)),
-		pterm.NewLettersFromStringWithStyle("r", pterm.NewStyle(pterm.FgLightRed)),
+		pterm.NewLettersFromStringWithStyle("No", pterm.NewStyle(pterm.FgCyan)),
+		pterm.NewLettersFromStringWithStyle("or", pterm.NewStyle(pterm.FgLightRed)),
 	).Render(); err != nil {
 		_ = err
 	}
@@ -63,7 +65,7 @@ func main() {
 
 			pterm.Info.Printf("light: %d\n", d[0])
 
-			if err := rpi.AUDIO_LEFT.PWM(1<<(d[0]), 10*physic.KiloHertz); err != nil {
+			if err := rpi.P1_33.PWM(gpio.DutyMax>>d[0], LEDFreq); err != nil {
 				pterm.Error.Printf("cannot setup pwm for led %s\n", err)
 
 				return
