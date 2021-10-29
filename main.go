@@ -57,8 +57,10 @@ func main() {
 
 			return
 		case <-ticker.C:
+			// data will be filled by i2c call.
 			d := make([]byte, 1)
 
+			// read light from ADC (BCF8591) with i2c interface.
 			if err := b.Tx(I2CAddr, []byte{A0, 0x0}, d); err != nil {
 				pterm.Error.Printf("cannot communicate with i2c device %s\n", err)
 
